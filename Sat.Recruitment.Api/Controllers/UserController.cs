@@ -72,19 +72,27 @@ namespace Sat.Recruitment.Api.Controllers
                 var reader = ReadUsersFromFile();
 
                 //Normalize email
-                var aux = user.Email.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
+                //var aux = user.Email.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
 
-                var atIndex = aux[0].IndexOf("+", StringComparison.Ordinal);
+                //var atIndex = aux[0].IndexOf("+", StringComparison.Ordinal);
 
-                aux[0] = atIndex < 0 ? aux[0].Replace(".", "") : aux[0].Replace(".", "").Remove(atIndex);
+                //aux[0] = atIndex < 0 ? aux[0].Replace(".", "") : aux[0].Replace(".", "").Remove(atIndex);
 
-                user.Email = string.Join("@", new string[] { aux[0], aux[1] });
+                //user.Email = string.Join("@", new string[] { aux[0], aux[1] });
 
                 while (reader.Peek() >= 0)
                 {
-                    var line = reader.ReadLineAsync().Result;
-
-                    _users.Add(user);
+                    var line = reader.ReadLineAsync().Result.Split(',');
+                    var user__ = new User
+                    {
+                        Name = line[0],
+                        Email = line[1],
+                        Phone = line[2],
+                        Address = line[3],
+                        UserType = line[4],
+                        Money = decimal.Parse(line[5]),
+                    };
+                    _users.Add(user__);
                 }
                 reader.Close();
                 try

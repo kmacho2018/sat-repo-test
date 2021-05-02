@@ -12,10 +12,10 @@ namespace Sat.Recruitment.Test
         {
             var userController = new UserController();
 
-            var result = userController.CreateUser(new Data.Models.User() { }).Result;//"Mike", "mike@gmail.com", "Av. Juan G", "+349 1122354215", "Normal", "124").Result;
+            var result = userController.CreateUser(new Data.Models.User() { Name = "Mike", Email = "mike@gmail.com", Address = "Av. Juan G", Phone = "+349 1122354215", UserType = "Normal", Money = 124 }).Result;
 
-            Assert.Equal(true, result.IsSuccess);
-            Assert.Equal("User Created", result.Errors);
+            Assert.Equal(true, result.Value.IsSuccess);
+            Assert.Equal("User Created", result.Value.Errors);
         }
 
         [Fact]
@@ -23,10 +23,10 @@ namespace Sat.Recruitment.Test
         {
             var userController = new UserController();
 
-            var result = userController.CreateUser(new Data.Models.User() { }).Result;//"Agustina", "Agustina@gmail.com", "Av. Juan G", "+349 1122354215", "Normal", "124").Result;
+            var result = userController.CreateUser(new Data.Models.User() { Name = "Agustina", Email = "Agustina@gmail.com", Address = "Av. Juan G", Phone = "+349 1122354215", UserType = "Normal", Money = 124 }).Result;
 
-            Assert.Equal(false, result.IsSuccess);
-            Assert.Equal("The user is duplicated", result.Errors);
+            Assert.Equal(false, result.Value.IsSuccess);
+            Assert.Equal("The user is duplicated", result.Value.Errors);
         }
     }
 }
