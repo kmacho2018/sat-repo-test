@@ -1,0 +1,6 @@
+Juan,Juan@marmol.com,+5491154762312,Peru 2464,Normal,1234
+Franco,Franco.Perez@gmail.com,+534645213542,Alvear y Colombres,Premium,112234
+Agustina,Agustina@gmail.com,+534645213542,Garay y Otra Calle,SuperUser,112234
+Juan,juancarloscamacho01@gmail.com,8294639012,calle interior i,Normal,100
+Jose,juancarlosc3amacho01@gmail.com,8294639034,calle intherior i,Normal,100
+JuMLan,juancaKKrloscamacho01@gmail.com,8294039012,calle interior i,Normal,100
