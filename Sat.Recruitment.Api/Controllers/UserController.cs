@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Sat.Recruitment.Api.Controllers
@@ -32,30 +33,25 @@ namespace Sat.Recruitment.Api.Controllers
             }
             else
             {
+                decimal percentage = 0;
                 if (user.UserType == "Normal")
                 {
                     if (user.Money > 100)
                     {
-                        var percentage = Convert.ToDecimal(0.12);
-                        //If new user is normal and has more than USD100
-                        var gif = user.Money * percentage;
-                        user.Money = user.Money + gif;
+                        percentage = Convert.ToDecimal(0.12);
                     }
-                    if (user.Money < 100)
+                    if ((user.Money < 100) && (user.Money > 10))
                     {
-                        if (user.Money > 10)
-                        {
-                            var percentage = Convert.ToDecimal(0.8);
-                            var gif = user.Money * percentage;
-                            user.Money = user.Money + gif;
-                        }
+                        percentage = Convert.ToDecimal(0.8);
                     }
+                    var gif = user.Money * percentage;
+                    user.Money = user.Money + gif;
                 }
                 if (user.UserType == "SuperUser")
                 {
                     if (user.Money > 100)
                     {
-                        var percentage = Convert.ToDecimal(0.20);
+                        percentage = Convert.ToDecimal(0.20);
                         var gif = user.Money * percentage;
                         user.Money = user.Money + gif;
                     }
@@ -70,15 +66,6 @@ namespace Sat.Recruitment.Api.Controllers
                 }
 
                 var reader = ReadUsersFromFile();
-
-                //Normalize email
-                //var aux = user.Email.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
-
-                //var atIndex = aux[0].IndexOf("+", StringComparison.Ordinal);
-
-                //aux[0] = atIndex < 0 ? aux[0].Replace(".", "") : aux[0].Replace(".", "").Remove(atIndex);
-
-                //user.Email = string.Join("@", new string[] { aux[0], aux[1] });
 
                 while (reader.Peek() >= 0)
                 {
@@ -100,24 +87,21 @@ namespace Sat.Recruitment.Api.Controllers
                     var isDuplicated = false;
                     foreach (var user_ in _users)
                     {
-                        if (user_.Email == user.Email
-                            ||
-                            user_.Phone == user.Phone)
+                        if (user_.Email == user.Email || user_.Phone == user.Phone)
                         {
                             isDuplicated = true;
                         }
-                        else if (user_.Name == user.Name)
+                        else if ((user_.Name == user.Name) && (user_.Address == user.Address))
                         {
-                            if (user_.Address == user.Address)
-                            {
-                                isDuplicated = true;
-                                throw new Exception("User is duplicated");
-                            }
+                            isDuplicated = true;
+                            throw new Exception("User is duplicated");
                         }
                     }
 
                     if (!isDuplicated)
                     {
+                        AddNewUsersToFile(user.Name + "," + user.Email + "," + user.Phone + "," + user.Address + "," + user.UserType + "," + user.Money);
+
                         Debug.WriteLine("User Created");
 
                         return new Result()
@@ -146,15 +130,13 @@ namespace Sat.Recruitment.Api.Controllers
                         Errors = "The user is duplicated"
                     };
                 }
-
-                return new Result()
-                {
-                    IsSuccess = true,
-                    Errors = "User Created"
-                };
             }
         }
 
+        /// <summary>
+        /// Method for get Users From File
+        /// </summary>
+        /// <returns></returns>
         private StreamReader ReadUsersFromFile()
         {
             var path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
@@ -163,6 +145,22 @@ namespace Sat.Recruitment.Api.Controllers
 
             StreamReader reader = new StreamReader(fileStream);
             return reader;
+        }
+
+        /// <summary>
+        /// Add new users to File.
+        /// </summary>
+        /// <param name="userInfo"></param>
+        private void AddNewUsersToFile(string userInfo)
+        {
+            var path = Directory.GetCurrentDirectory() + "/Files/Users.txt";
+
+            using (var fileStream = new FileStream(path, FileMode.Append))
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes("\n" + userInfo);
+
+                fileStream.Write(bytes, 0, bytes.Length);
+            }
         }
     }
 }
